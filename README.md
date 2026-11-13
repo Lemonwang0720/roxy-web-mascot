@@ -4,7 +4,7 @@
 
 [查看博客里的洛琪希](https://lemonblog.pages.dev/)
 
-![独立演示使用的小小探险家](public/preview.webp)
+![洛琪希看板娘](public/preview.webp)
 
 ## 本地体验
 
@@ -30,9 +30,9 @@ node scripts/serve.mjs
 
 ## 图层与授权
 
-仓库附带原创示例「小小探险家」，可直接运行。替换角色时，把 10 张 1024 × 1536 的透明 WebP 放到 `public/layers/`，沿用文件名和透明画布，并替换 `public/preview.webp`。渲染器中的眼睛、握点和网格关节基于固定坐标，差异较大的角色还需要调整 `src/mascot/renderer.ts`。示例素材可用 Python 和 Pillow 运行 `scripts/draw-demo.py` 重新生成。
+仓库包含博客实装的洛琪希。动画使用 `public/layers/` 中的 10 张 1024 × 1536 透明 WebP，静态回退图是 `public/preview.webp`。眼睛、握点和网格关节在 `src/mascot/renderer.ts` 中与这套图层对齐。
 
-代码与仓库内的示例素材采用 [MIT 许可证](LICENSE)。博客上的洛琪希同人贴图与原剧参考图未随仓库分发。
+代码及其文档采用 [MIT 许可证](LICENSE)。洛琪希（Roxy Migurdia）是《无职转生》中的角色。角色相关权利归原权利人，`public/layers/` 和 `public/preview.webp` 中的同人贴图不适用 MIT 许可证。
 
 ## 参考
 
