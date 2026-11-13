@@ -1,0 +1,11 @@
+{
+  "name": "roxy-web-mascot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/serve.mjs"
+  }
+}

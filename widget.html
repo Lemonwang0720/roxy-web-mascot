@@ -1,0 +1,87 @@
+<aside
+  class="mascot"
+  id="widget-mascot"
+  aria-label="小小探险家看板娘"
+>
+  <div
+    class="mascot-speech"
+    id="mascot-speech"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    aria-hidden="true"
+  ></div>
+  <div class="mascot-expanded" id="mascot-expanded">
+    <div class="mascot-tools">
+      <button
+        class="mascot-drag"
+        id="mascot-drag"
+        aria-label="拖动小小探险家，方向键可移动，Home 键归位"
+        title="拖动"
+      >
+        <span aria-hidden="true">✥</span>
+      </button>
+      <button
+        class="mascot-reset"
+        id="mascot-reset"
+        aria-label="重置小小探险家位置"
+        title="回到默认位置"
+      >
+        <span aria-hidden="true">↺</span>
+      </button>
+      <button class="mascot-hide" id="mascot-hide" aria-label="让小小探险家休息" title="休息">
+        <span aria-hidden="true">☾</span>
+      </button>
+    </div>
+    <button
+      class="mascot-character"
+      id="mascot-character"
+      aria-label="和小小探险家打招呼"
+      title="点我打个招呼"
+    >
+      <canvas
+        class="widget-canvas"
+        id="widget-canvas"
+        data-layers='./layers/'
+        aria-hidden="true"
+      ></canvas>
+      <div class="mascot-breathe">
+        <img
+          class="widget-art"
+          data-src='./preview.webp'
+          width="512"
+          height="768"
+          alt="小小探险家看板娘"
+          decoding="async"
+        />
+        <noscript>
+          <img
+            class="widget-art"
+            src='./preview.webp'
+            width="512"
+            height="768"
+            alt="小小探险家看板娘"
+          />
+        </noscript>
+      </div>
+    </button>
+  </div>
+  <button
+    class="mascot-restore"
+    id="mascot-restore"
+    aria-label="展开小小探险家看板娘"
+    title="点击唤醒"
+    aria-controls="mascot-expanded"
+    aria-expanded="false"
+  >
+    <span class="sleep-face" aria-hidden="true">
+      ( ˘ω˘ )
+    </span>
+    <span>探险家在休息</span>
+    <span class="sleep-letters" aria-hidden="true">
+      <i>z</i>
+      <i>z</i>
+      <i>Z</i>
+    </span>
+  </button>
+</aside>

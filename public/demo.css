@@ -1,0 +1,12 @@
+:root {
+  color-scheme: light;
+  background: #f8f5ed;
+  color: #213a37;
+  font-family: system-ui, sans-serif;
+}
+body { margin: 0; }
+.site-header { padding: 1.25rem clamp(1.25rem, 7vw, 6rem); }
+main { margin: clamp(2rem, 12vh, 9rem) auto 16rem; width: min(42rem, 88vw); }
+h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); line-height: 1.16; }
+p { line-height: 1.7; }
+a { color: #275d53; text-underline-offset: .25em; }
