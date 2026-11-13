@@ -34,7 +34,7 @@ node scripts/serve.mjs
 
 ## 图层与授权
 
-仓库包含博客实装的洛琪希。动画使用 `public/layers/` 中的 10 张 1024 × 1536 透明 WebP，静态回退图是 `public/preview.webp`。眼睛、握点和网格关节在 `src/mascot/renderer.ts` 中与这套图层对齐。
+仓库包含博客实装的洛琪希。动画使用 `public/layers/` 中的 11 张 1024 × 1536 透明 WebP，静态回退图是 `public/preview.webp`。眼睛、握点和网格关节在 `src/mascot/renderer.ts` 中与这套图层对齐。辫子和衣服位于杖身后方，握手覆盖杖柄，两者共享握点和动画变换。
 
 代码及其文档采用 [MIT 许可证](LICENSE)。洛琪希（Roxy Migurdia）是《无职转生》中的角色。角色相关权利归原权利人，`public/layers/` 和 `public/preview.webp` 中的同人贴图不适用 MIT 许可证。
 

@@ -1,6 +1,6 @@
 /** Current registered artwork. Layer order is the shader joint contract.
  * Replace public/layers/*.webp while preserving the registered canvas.
- * Slots 6 and 10 are intentionally empty; neither requires an image request.
+ * Slot 6 is intentionally empty and requires no image request.
  */
 const parts = [
   'body',
@@ -13,7 +13,7 @@ const parts = [
   'free-arm',
   'staff',
   'collar',
-  null,
+  'staff-grip',
   'lower-body',
 ] as const;
 export async function loadMascotLayers(baseUrl: string) {

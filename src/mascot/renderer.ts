@@ -93,6 +93,7 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
     void main() {
       v_uv = a_uv;
       vec2 p = a_uv*vec2(1024.,1536.);
+      bool staffAssembly=(u_layer>7.5&&u_layer<8.5)||(u_layer>9.5&&u_layer<10.5);
       if(u_layer>6.5&&u_layer<7.5){
         // Finger spacing belongs to the painted hand, not a polar squeeze.
         // Keep the compact, rounded silhouette intact during quiet motion.
@@ -173,7 +174,10 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
       p.y-=chest*u_mood.z*3.;
       if(u_layer>2.5 && u_layer<4.5){
         float rootY=u_layer<3.5 ? 622. : 605.;
-        float weight=clamp((a_uv.y*1536.-rootY)/(1185.-rootY),0.,1.);
+        float braidY=a_uv.y*1536.;
+        float weight=clamp((braidY-rootY)/(1185.-rootY),0.,1.);
+        // Hold the restored overlap at the upper braid, then blend into the swing.
+        if(u_layer<3.5)weight*=smoothstep(710.,825.,braidY);
         vec3 joints=u_layer<3.5?u_braidLeft:u_braidRight;
         vec3 pitchJoints=u_layer<3.5?u_braidPitchLeft:u_braidPitchRight;
         float length=(1185.-rootY)/3.;
@@ -241,7 +245,7 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
         p.y+=cloth*u_clothLift*.45;
       }
       if(u_layer>6.5&&u_layer<7.5){p=rotateAt(p,vec2(650.,790.),u_follow.z*.18+clamp(u_secondary.y*.018,-.007,.007));}
-      if(u_layer>7.5&&u_layer<8.5){
+      if(staffAssembly){
         // The staff is rigid: use the gripping hand's shoulder transform for
         // every vertex instead of bending the shaft with torso skin weights.
         float gripWeight=1.-smoothstep(720.,1100.,792.);
@@ -276,7 +280,7 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
         p=rotateAt(p,vec2(512.,1030.),u_follow.x*parentWeight);
         p.x+=u_follow.y*parentWeight;
         p.y+=u_followY*parentWeight;
-        if(u_layer>7.5&&u_layer<8.5){
+        if(staffAssembly){
           // Fist and prop share one pivot. The wrist absorbs torso rotation;
           // a bounded spring residual gives the long staff a little inertia.
           p=rotateAt(p,posedGrip(shoulderTurn,breath),wristCorrection(shoulderTurn));
@@ -697,6 +701,8 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
         }
         if ([0, 3, 4, 5, 6].includes(index))
           rows.push(...[543, 560, 568, 580, 595, 610, 628, 650, 690, 720].map((y) => y / 1536));
+        if (index === 3)
+          rows.push(...[724, 738, 752, 766, 780, 794, 808, 815].map((y) => y / 1536));
         if (index === 0 || index === 11)
           rows.push(
             ...[
@@ -838,7 +844,8 @@ export async function createMascotRenderer(canvas: HTMLCanvasElement) {
       const mesh = meshes[quality.coarse ? 1 : 0];
       canvas.dataset.quality = ['light', 'balanced', 'high'][quality.level];
       canvas.dataset.vertices = String(mesh.reduce((sum, part) => sum + part.count, 0));
-      [11, 0, 1, 2, 9, 3, 4, 5, 6, 7, 8].forEach((index) => {
+      // Body and hair sit behind the rod, with the curled fingers in front.
+      [11, 0, 1, 2, 9, 3, 4, 5, 6, 7, 8, 10].forEach((index) => {
         const layer = layerTextures[index];
         const opacity = 1;
         if (opacity < 0.002) return;
