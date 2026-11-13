@@ -37,4 +37,3 @@ node scripts/serve.mjs
 ## 参考
 
 - [live2d-widget](https://github.com/stevenjoezhang/live2d-widget) 提供了通过网页脚本嵌入看板娘的发布思路。
-- [晓林的博客](https://www.peterjxl.com/) 是原博客的设计参考之一。
