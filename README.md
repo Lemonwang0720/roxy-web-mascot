@@ -4,7 +4,7 @@
 
 [查看博客里的洛琪希](https://lemonblog.pages.dev/)
 
-![洛琪希看板娘](public/preview.webp)
+![洛琪希看板娘](https://raw.githubusercontent.com/Lemonwang0720/roxy-web-mascot/b5ba45bb5c5dc40eac9691f0e0b0af6f9eca0084/public/preview.webp)
 
 ## 本地体验
 
