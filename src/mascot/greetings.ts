@@ -8,11 +8,33 @@ function period(now: Date): keyof typeof dialogue.arrival {
   if (hour < 18) return 'afternoon';
   return 'evening';
 }
-export function wakeGreeting(now = new Date()) {
-  return dialogue.wake[period(now)];
+type Period = keyof typeof dialogue.arrival;
+type Greeting = Partial<Record<Period, string>> | string;
+export type DialogueOptions = {
+  arrival?: Greeting;
+  wake?: Greeting;
+  rest?: string[];
+  click?: string[];
+};
+
+function greeting(custom: Greeting | undefined, defaults: Record<Period, string>, now: Date) {
+  const key = period(now);
+  const value = typeof custom === 'string' ? custom : custom?.[key];
+  return typeof value === 'string' && value.trim() ? value : defaults[key];
 }
-export function arrivalGreeting(now = new Date()) {
-  return dialogue.arrival[period(now)];
+
+function lines(custom: string[] | undefined, defaults: string[]) {
+  const valid = Array.isArray(custom)
+    ? custom.filter((line) => typeof line === 'string' && line.trim())
+    : [];
+  return valid.length ? valid : defaults;
 }
-export const restGreetings = dialogue.rest;
-export const clickGreetings = dialogue.click;
+
+export function createGreetings(custom: DialogueOptions = {}) {
+  return {
+    arrivalGreeting: (now = new Date()) => greeting(custom.arrival, dialogue.arrival, now),
+    wakeGreeting: (now = new Date()) => greeting(custom.wake, dialogue.wake, now),
+    restGreetings: lines(custom.rest, dialogue.rest),
+    clickGreetings: lines(custom.click, dialogue.click),
+  };
+}

@@ -1,7 +1,8 @@
 /** Viewport-relative positions survive resizing and never leave the controls offscreen. */
-export function initMascotPlacement(root: HTMLElement, onLayout: () => void) {
+export function initMascotPlacement(root: HTMLElement, topOffset: number, onLayout: () => void) {
   const handle = root.querySelector<HTMLButtonElement>('#mascot-drag')!;
   const reset = root.querySelector<HTMLButtonElement>('#mascot-reset')!;
+  const anchoredRight = root.dataset.anchor === 'right';
   let saved: { x: number; y: number } | null = null;
   try {
     const value = JSON.parse(localStorage.getItem('mascot-widget-state-position') || 'null');
@@ -11,21 +12,23 @@ export function initMascotPlacement(root: HTMLElement, onLayout: () => void) {
   let dragging: { id: number; x: number; y: number; left: number; top: number } | null = null;
   const limits = () => {
     const rect = root.getBoundingClientRect();
-    const top = (document.querySelector('.site-header')?.getBoundingClientRect().height || 70) + 10;
-    const toolsSpace = root.classList.contains('collapsed') ? 0 : 42;
+    const top = Math.min(topOffset + 10, Math.max(10, innerHeight - rect.height - 12));
+    const toolsSpace = root.classList.contains('collapsed') ? 0 : 50;
     const width = Math.max(
       rect.width,
       root.querySelector('#mascot-restore')?.getBoundingClientRect().width || 0,
     );
+    const maxX = Math.max(10, innerWidth - width - (anchoredRight ? 0 : toolsSpace) - 10);
     return {
-      minX: 10,
-      maxX: Math.max(10, innerWidth - width - toolsSpace - 10),
+      minX: anchoredRight ? Math.min(maxX, 10 + toolsSpace) : 10,
+      maxX,
       minY: top,
       maxY: Math.max(top, innerHeight - rect.height - 12),
     };
   };
   const place = (x: number, y: number) => {
     const b = limits();
+    root.style.right = 'auto';
     root.style.left = `${Math.max(b.minX, Math.min(b.maxX, x))}px`;
     root.style.top = `${Math.max(b.minY, Math.min(b.maxY, y))}px`;
     root.style.bottom = 'auto';
@@ -38,7 +41,8 @@ export function initMascotPlacement(root: HTMLElement, onLayout: () => void) {
     } else {
       // Let the compositor anchor the default position. Safari's toolbar
       // changes innerHeight while scrolling; rewriting a pixel top jumps.
-      root.style.left = `${b.minX}px`;
+      root.style.left = anchoredRight ? 'auto' : '10px';
+      root.style.right = anchoredRight ? '10px' : 'auto';
       root.style.top = 'auto';
       root.style.bottom = 'calc(12px + env(safe-area-inset-bottom))';
       onLayout();

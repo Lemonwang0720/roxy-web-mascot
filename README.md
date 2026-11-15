@@ -1,32 +1,60 @@
 # 洛琪希网页看板娘 · Roxy Web Mascot
 
-从「王柠檬的自习室」的洛琪希看板娘提取的独立网页挂件。使用 TypeScript 和 WebGL 网格渲染分层插画。项目灵感来自博客里的 Live2D 看板娘，动画由本项目的着色器和动作模块实现。
+把洛琪希放到你的博客角落。她会跟随鼠标、眨眼、点头和回应点击，可拖动，也可以让她小憩。挂件使用 WebGL 渲染分层插画，可作为静态资源自托管。
 
-[查看博客里的洛琪希](https://lemonblog.pages.dev/)
+An interactive, self-hosted WebGL mascot widget for blogs and static websites.
 
-![洛琪希看板娘展示图](docs/roxy-cover.png)
+[**在线体验**](https://lemonwang0720.github.io/roxy-web-mascot/) · [**下载即用**](https://github.com/Lemonwang0720/roxy-web-mascot/releases/download/v0.1.0/roxy-web-mascot-v0.1.0.zip) · [**一行接入**](#接入自己的网页)
 
-## 本地体验
-
-安装 Node.js 24 或更新版本，然后在仓库目录运行：
-
-```sh
-node scripts/serve.mjs
-```
-
-打开 http://127.0.0.1:4178/ 。小窗口初次打开时角色默认收起，点击左下角的小憩按钮即可唤醒。角色支持视线跟随、眨眼、呼吸、点头、披风和发辫摆动、点击对白、拖动与小憩。WebGL 不可用时显示静态图，系统开启减少动态效果时会减少动画。
+![洛琪希跟随指针、点头和回应点击的实机演示](docs/roxy-demo.gif)
 
 ## 接入自己的网页
 
-1. 执行 `node scripts/build.mjs`。
-2. 将 `dist/` 上传到自己站点的静态目录，例如 `/mascot/`。
-3. 在页面的 `</body>` 前加一行：
+1. 下载 ZIP，把解压后的文件部署到站点的静态目录，例如 `/mascot/`。浏览器里打开该目录的 `index.html` 可以试用，部署成品只需要静态服务器。
+2. 把下面这行加到自己的 HTML，或者博客所有页面共用的布局模板。保留 `mascot.js`、CSS、`modules/` 和贴图之间的目录关系。
 
 ```html
 <script type="module" src="/mascot/mascot.js"></script>
 ```
 
-挂件会从脚本所在目录加载样式和贴图。每页挂载一个实例。用 `src/mascot/dialogue.ts` 改对白，重新构建后上传。
+挂件会自动加载样式和贴图，每页挂载一个实例。WebGL 不可用时显示静态图，系统开启减少动态效果时会减少动画。
+
+### 自定义
+
+```html
+<script
+  type="module"
+  src="/mascot/mascot.js"
+  data-roxy-start="expanded"
+  data-roxy-position="right"
+  data-roxy-top-offset="64"
+  data-roxy-dialogue="/mascot/dialogue.json"
+></script>
+```
+
+| 选项                   | 默认     | 用途                                                                                     |
+| ---------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `data-roxy-start`      | `auto`   | 窄窗口首次进入时收起。也可选 `expanded` 或 `collapsed`，访客手动休息和唤醒的选择会保存。 |
+| `data-roxy-position`   | `left`   | 默认停在左下角，可设为 `right`。拖动后可用归位按钮恢复。                                 |
+| `data-roxy-top-offset` | `0`      | 固定页眉的高度，单位为像素，供拖动范围和对白位置计算使用。                               |
+| `data-roxy-dialogue`   | 内置对白 | 可选 JSON 文件地址。编辑对应文件并上传即可更改对白。                                     |
+
+对白 JSON 示例：
+
+```json
+{
+  "arrival": "欢迎来到我的博客！",
+  "wake": "我醒啦，继续读吧。",
+  "rest": ["我先小睡一会儿。"],
+  "click": ["你好呀！", "想聊点什么？"]
+}
+```
+
+`arrival` 和 `wake` 可以传一条对白，也可以按 `night`、`morning`、`noon`、`afternoon`、`evening` 分时段填写。省略的字段使用内置对白。
+
+## 从源码运行
+
+使用 Node.js 24 或更新版本。在仓库目录执行 `npm run dev`，打开 http://127.0.0.1:4178/ 。执行 `npm run build` 会将可部署文件输出到 `dist/`。
 
 ## 角色更新
 
@@ -41,3 +69,8 @@ node scripts/serve.mjs
 ## 参考
 
 - [live2d-widget](https://github.com/stevenjoezhang/live2d-widget) 提供了通过网页脚本嵌入看板娘的发布思路。
+- [王柠檬的自习室](https://lemonblog.pages.dev/) 是挂件最初使用的博客。
+
+## 角色展示图
+
+<img src="docs/roxy-cover.png" width="420" alt="洛琪希看板娘的深色背景展示图">

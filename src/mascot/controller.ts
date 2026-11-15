@@ -6,11 +6,16 @@ import { createBodyMotion } from './body-motion.js';
 import { createHeadMotion } from './head-motion.js';
 import { createClothMotion } from './cloth-motion.js';
 import { createStaffMotion } from './staff-motion.js';
-import { wakeGreeting, arrivalGreeting, restGreetings, clickGreetings } from './greetings.js';
+import { createGreetings, type DialogueOptions } from './greetings.js';
 
-export function initMascot() {
-  const mascot = document.querySelector<HTMLElement>('#widget-mascot');
-  if (!mascot) return;
+type MascotOptions = {
+  start?: 'auto' | 'expanded' | 'collapsed';
+  position?: 'left' | 'right';
+  topOffset?: number;
+  dialogue?: DialogueOptions;
+};
+
+export function initMascot(mascot: HTMLElement, options: MascotOptions = {}) {
   // A host can keep the widget mounted across client-side navigation.
   // A canvas must have only one live controller.
   const initialized = Symbol.for('roxy-web-mascot.controller');
@@ -18,13 +23,18 @@ export function initMascot() {
   if (instance[initialized]) return;
   instance[initialized] = true;
   const root = mascot;
+  const { start: initialMode = 'auto', position = 'left', topOffset = 0 } = options;
+  const { wakeGreeting, arrivalGreeting, restGreetings, clickGreetings } = createGreetings(
+    options.dialogue,
+  );
+  root.dataset.anchor = position;
   const compact = matchMedia('(max-width: 1350px), (max-height: 820px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(pointer: fine)');
-  const character = document.querySelector<HTMLButtonElement>('#mascot-character')!;
+  const character = root.querySelector<HTMLButtonElement>('#mascot-character')!;
   initMascotHearts(root, character, reduced);
-  const restore = document.querySelector<HTMLButtonElement>('#mascot-restore')!;
-  const expanded = document.querySelector<HTMLElement>('#mascot-expanded')!;
+  const restore = root.querySelector<HTMLButtonElement>('#mascot-restore')!;
+  const expanded = root.querySelector<HTMLElement>('#mascot-expanded')!;
   const preview = root.querySelector<HTMLImageElement>('.widget-art')!;
   let previewReady: Promise<void> | undefined;
   const loadPreview = () => {
@@ -34,12 +44,14 @@ export function initMascot() {
     }
     return previewReady;
   };
-  const canvas = document.querySelector<HTMLCanvasElement>('#widget-canvas')!;
+  const canvas = root.querySelector<HTMLCanvasElement>('#widget-canvas')!;
   let preference: string | null = null;
   try {
     preference = localStorage.getItem('mascot-widget-state');
   } catch {}
-  let collapsed = preference ? preference === 'collapsed' : compact.matches;
+  let collapsed = preference
+    ? preference === 'collapsed'
+    : initialMode === 'collapsed' || (initialMode === 'auto' && compact.matches);
   let renderer: Awaited<ReturnType<typeof createMascotRenderer>> = null;
   let rendererStarted = false;
   let rendererGeneration = 0,
@@ -499,9 +511,7 @@ export function initMascot() {
   };
   const positionSpeech = () => {
     const rect = root.getBoundingClientRect();
-    const headerBottom =
-      document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0;
-    const above = rect.top - Math.max(0, headerBottom) - 16;
+    const above = rect.top - topOffset - 16;
     const below = innerHeight - rect.bottom - 16;
     speech.classList.toggle('below', above < speech.offsetHeight && below > above);
   };
@@ -594,7 +604,7 @@ export function initMascot() {
   };
   apply();
   initialApply = false;
-  const placement = initMascotPlacement(root, () => {
+  const placement = initMascotPlacement(root, topOffset, () => {
     positionSpeech();
     if (renderer) paint(reduced.matches ? 0 : elapsed);
   });
@@ -615,14 +625,14 @@ export function initMascot() {
   canvas.addEventListener('webglcontextrestored', () => {
     if (!collapsed) ensureRenderer();
   });
-  document.querySelector('#mascot-hide')!.addEventListener('click', () => {
+  root.querySelector('#mascot-hide')!.addEventListener('click', () => {
     void changeRest(true);
   });
   restore.addEventListener('click', () => {
     void changeRest(false);
   });
   compact.addEventListener('change', () => {
-    if (!preference && !switching) {
+    if (initialMode === 'auto' && !preference && !switching) {
       collapsed = compact.matches;
       if (collapsed) hush();
       apply();
